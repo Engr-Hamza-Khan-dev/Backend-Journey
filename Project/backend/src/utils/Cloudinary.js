@@ -24,3 +24,5 @@ const uploadOnCloudinary = async (localfile) => {
     return null;
   }
 };
+
+export { uploadOnCloudinary };

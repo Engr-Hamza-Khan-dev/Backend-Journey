@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
-import { use } from "react";
 const userSchema = new Schema(
   {
     username: {
@@ -21,7 +20,7 @@ const userSchema = new Schema(
     },
     avatar: {
       type: String, //clodinary url
-      required: true,
+      
     },
     coverimage: {
       type: String, //clodinary url
@@ -44,10 +43,8 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = bcrypt.hash(this.password, 10);
-  }
-  next();
+  if (!this.isModified("password"))return; 
+    this.password =await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods.isPasswordMatch = async function (password) {

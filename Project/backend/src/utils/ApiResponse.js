@@ -10,3 +10,5 @@ class ApiResponse extends Response{
         this.data=data;
     }
 }
+
+export {ApiResponse};
