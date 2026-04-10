@@ -2,7 +2,7 @@ import { asynchandler } from "../utils/asynchandlers.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import {ApiResponse} from "../utils/ApiResponse.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = asynchandler(async (req, res) => {
   //get user details from frontend
@@ -34,8 +34,8 @@ const registerUser = asynchandler(async (req, res) => {
     throw new ApiError(400, "Password must be at least 6 characters long");
   }
 
-    //check if user already exists
-  const existedUser = User.findOne({
+  //check if user already exists
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
   console.log("ExistedUser:", existedUser);
@@ -46,19 +46,27 @@ const registerUser = asynchandler(async (req, res) => {
       "User already exists with the provided username or email",
     );
   }
- //check for image upload,check for avatar
+  //check for image upload,check for avatar
   const avatarLocalPath = req.files?.avatar[0].path;
-  const coverImagePath = req.files?.coverimage[0].path;
-  console.log("Avatar Path:", avatarPath);
-  console.log("Cover Image Path:", coverImagePath);
+  let coverImagePath;
+  let coverImageUploadResponse
+  if (
+    req.files &&
+    Array.isArray(req.files.coverimage) &&
+    req.files.coverimage.length > 0
+  ) {
+    coverImagePath = req.files.coverimage[0].path;
+    console.log("Cover Image Path:", coverImagePath);
+    coverImageUploadResponse = await uploadOnCloudinary(coverImagePath);
+  }
+  console.log("Request Files:", req.files);
+  console.log("Avatar Path:", avatarLocalPath);
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
   }
- 
 
- //upload them to cloudinary
+  //upload them to cloudinary
   const avataruploadResponse = await uploadOnCloudinary(avatarLocalPath);
-  const coverImageUploadResponse = await uploadOnCloudinary(coverImagePath);
 
   if (!avataruploadResponse) {
     throw new ApiError(500, "Failed to upload images");
@@ -73,17 +81,19 @@ const registerUser = asynchandler(async (req, res) => {
     username: username.toLowerCase(),
     email,
     password,
-  })
+  });
 
-  const createdUser=awaitUser.findById(user._id).select("-password -refreshToken");
+  const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken",
+  );
 
   if (!createdUser) {
     throw new ApiError(500, "Failed to create user");
   }
 
   //send response to frontend
-  return res.status(201).json(
-    new ApiResponse(201,"User registered successfully",createdUser)
-  )
+  return res
+    .status(201)
+    .json(new ApiResponse(200, "User registered successfully", createdUser));
 });
 export { registerUser };

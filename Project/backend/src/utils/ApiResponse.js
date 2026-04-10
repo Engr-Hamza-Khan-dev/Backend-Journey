@@ -5,7 +5,7 @@ class ApiResponse extends Response{
         data=""
     ){
         super(message);
-        this.statusCode=statusCode<400;
+        this.statusCode=statusCode;
         this.message=message;
         this.data=data;
     }
