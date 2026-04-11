@@ -19,23 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/user",userRoutes);
 //http://localhost:8000/api/user/register
-app.post("/create",async(req,res)=>{
-    let create=await User.create({
-        username:req.body.username,
-        email:req.body.email,
-        fullname:req.body.fullname,
-        password:req.body.password,
-    })
-    res.send(create);
-})
 
-app.put("/update/:id",async(req,res)=>{
-    let update=await User.findByIdAndUpdate(req.params.id,{
-        username:req.body.username,
-        email:req.body.email,
-        fullname:req.body.fullname,
-        password:req.body.password,
-    },{new:true})
-    res.send(update);
-})
+
+
 export {app};
