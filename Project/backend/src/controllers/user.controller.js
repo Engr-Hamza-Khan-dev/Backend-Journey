@@ -103,7 +103,7 @@ const registerUser = asynchandler(async (req, res) => {
   //send response to frontend
   return res
     .status(201)
-    .json(new ApiResponse(200, "User registered successfully", createdUser));
+    .json(new ApiResponse(200,  createdUser,"User registered successfully"));
 });
 
 // Login user controller

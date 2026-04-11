@@ -1,40 +1,25 @@
-import React from 'react';
-
-
+import React from "react";
 
 const UpdateUser = () => {
+  return (
+    <>
+      <div>
+        <h2>Update User</h2>
 
-    return (
+        <form className="space-y-5" onSubmit={fillform}>
+          <input type="text" placeholder="Username" />
 
-        <>
+          <input type="text" placeholder="Full Name" />
 
-            <div>
+          <input type="email" placeholder="Email" />
 
-                <h2>Update User</h2>
+          <input type="password" placeholder="Password" />
 
-                <form className="space-y-5" onSubmit={fillform}>
-
-                    <input type="text" placeholder="Username" />
-
-                    <input type="text" placeholder="Full Name" />
-
-                    <input type="email" placeholder="Email" />
-
-                    <input type="password" placeholder="Password" />
-
-                    <button type="submit">Update</button>
-
-                </form>
-
-            </div>
-
-        </>
-
-    );
-
-}
-
-
+          <button type="submit">Update</button>
+        </form>
+      </div>
+    </>
+  );
+};
 
 export default UpdateUser;
-
