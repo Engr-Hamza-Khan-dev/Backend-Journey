@@ -21,5 +21,4 @@ app.use("/api/user",userRoutes);
 //http://localhost:8000/api/user/register
 
 
-
 export {app};
