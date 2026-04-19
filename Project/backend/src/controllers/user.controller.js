@@ -4,6 +4,7 @@ import { User } from "../models/User.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import { DeleteOldPicture } from "../utils/deleteOldAvatar.js";
 
 const generateAccessandRefreshTokens = async (userid) => {
   const user = await User.findById(userid);
@@ -325,7 +326,11 @@ const updateUserAvatar = asynchandler(async (req, res) => {
     throw new ApiError(500, "Failed to upload avatar");
   }
 
-  const user = await User.findByIdAndUpdate(
+  const user = await User.findById(req.user?._id);
+  const oldAvatarPublicId = user.avatar.public_id;
+  await DeleteOldAvatar(oldAvatarPublicId);
+
+  const updatedUser = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -336,7 +341,7 @@ const updateUserAvatar = asynchandler(async (req, res) => {
   ).select("-password");
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "User avatar updated successfully"));
+    .json(new ApiResponse(200, updatedUser, "User avatar updated successfully"));
 });
 
 
@@ -356,7 +361,11 @@ const updateUserCoverImage = asynchandler(async (req, res) => {
     throw new ApiError(500, "Failed to upload cover image");
   }
 
-  const user = await User.findByIdAndUpdate(
+  const user = await User.findById(req.user?._id);
+  const oldCoverImagePublicId = user.coverImage.public_id;
+  await DeleteOldPicture(oldCoverImagePublicId);
+
+  const updatedUser = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -367,7 +376,7 @@ const updateUserCoverImage = asynchandler(async (req, res) => {
   ).select("-password");
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "User avatar updated successfully"));
+    .json(new ApiResponse(200, updatedUser, "User cover image updated successfully"));
 });
 
 export {
