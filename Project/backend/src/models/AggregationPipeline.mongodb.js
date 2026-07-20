@@ -334,3 +334,81 @@ db.getCollection("User").aggregate([
     }
   }
 ])
+
+db.User.aggregate([
+  {
+    $bucket: {
+      groupBy:"$age",
+      boundaries: [ 0, 30,40 ],
+      default: "Greater then 40",
+      output: {
+        Count: { $sum:1 },
+        name:{$addToSet:"$name"}
+      }
+    }
+  }
+])
+
+
+db.Cust.insertMany([
+  { name: "Ali", age: 22 },
+  { name: "Sara", age: 25 },
+  { name: "Ahmed", age: 30 },
+  { name: "Ayesha", age: 28 }
+]);
+
+db.Order.insertMany([
+  { custid: 1, product: "Laptop", price: 1200 },
+  { custid: 1, product: "Mouse", price: 20 },
+  { custid: 2, product: "Phone", price: 800 },
+  { custid: 5, product: "Tablet", price: 400 }
+]);
+
+db.Order.find();
+
+
+db.Cust.aggregate([
+  {
+    $lookup: {
+      from: "Order",
+      localField: "_id",
+      foreignField: "custid",
+      as: "NewField"
+    }
+  },
+  {
+    $match: {
+      "NewField.0":{
+        $exists:true
+      }
+    }
+  }
+])
+
+db.Cust.aggregate([
+  {
+    $match: {
+      name: "Ali"
+    }
+  },
+  {
+    $lookup: {
+      from: "Order",
+      let: { cust_id: "$_id" },
+      pipeline: [
+        {
+          $match: {
+            $expr: { $eq: ["$custid", "$$cust_id"] }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            products: { $push: "$product" }
+          }
+        }
+      ],
+      as: "Productname"
+    }
+  }
+])
