@@ -1,0 +1,19 @@
+{
+  "name": "redis-practice",
+  "version": "1.0.0",
+  "description": "Redis practice",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "author": "hamza",
+  "license": "ISC",
+  "dependencies": {
+    "bullmq": "^5.80.9",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ioredis": "^5.11.1"
+  }
+}
